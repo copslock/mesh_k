@@ -1447,7 +1447,8 @@ function showChannel5G(form, wlan_id)
 	var wlbasic_channelnum_auto='Auto';
 	var wlbasic_channelnum_auto_for_5g='Auto(DFS)';
 	var sideBand=0;
-	var dsf_enable=1;
+//	var dsf_enable=1;
+	var dsf_enable=form.elements["dsf_enable"].value;
 	var idx=0;
 	var wlan_support_8812e=0;
 	if(form.elements["wlan_support_8812e"])

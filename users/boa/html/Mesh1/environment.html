@@ -11,23 +11,38 @@
 		<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="css/libs/font-awesome.css"/>	
 		<link href="css/bootstrap-switch.min.css" rel="stylesheet" />
+		<link type="image/x-icon" href="img/favicon.png" rel="shortcut icon"/>
 		<link rel="stylesheet" type="text/css" href="css/base.css"/>
 		<link rel="stylesheet" href="css/main.css" />
+		<script type="text/javascript" src="js/util_gw.js"> </script>
 	</head>
 	<body onload="opera()">
 		<div class="guest_net_environment">
-			<form action=/boafrm/formWlSiteSurvey method=POST name="formWlSiteSurvey">
-				<input type="hidden" value="Site Survey" name="refresh">&nbsp;&nbsp;  
-			  <input type="hidden" value="/pocket_sitesurvey.htm" name="submit-url">
+			<div class="systemmanage_button" style="margin: 20px 0;">
+				<button type="button" class="i18n" name="refresh_scan" onclick="siteSurvey2(0)"></button>
+			</div>
+			<!--<div><span>2.4G信号</span></div>-->
+			<form action="/boafrm/formWlSiteSurvey" method="POST" name="formWlSiteSurvey">
+			  <input type="hidden" value="Site Survey" name="refresh">			 
+			  <input type="hidden" value="/environment.html" name="submit-url">
 			  <input type="hidden" value="" name="ifname">
-			  <table border="1" style="width: 90%;margin: 0 auto;">
+			  <table border="1" style="width: 90%;margin: 0 auto;border-collapse: collapse;" id="table">
 			  
 			  <% wlSiteSurveyTbl(); %>
 			  </table>
-			  <br>
-			  
-			 
+			  <br>			 
 			</form>
+			<!--<div><span>5.8G信号</span></div>-->
+			<!--<form action="/boafrm/formWlSiteSurvey" method="POST" name="formWlSiteSurvey2">
+			  <input type="hidden" value="Site Survey" name="refresh">			 
+			  <input type="hidden" value="/environment.html" name="submit-url">
+			  <input type="hidden" value="" name="ifname" id="ifname">
+			  <table border="1" style="width: 90%;margin: 0 auto;border-collapse: collapse;" id="table2">
+			  
+			  <% wlSiteSurveyTbl(); %>
+			  </table>
+			  <br>			 
+			</form>-->
 		</div>
 		<script src="js/jquery.js"></script>
 		<script src="js/bootstrap.js"></script>
@@ -37,6 +52,11 @@
 	    <script src="js/jquery.i18n.properties.js"></script>
 	    <script src="js/language.js"></script>
 		<script>
+			var ss_status = 0;
+			var i18nLanguage=getCookie('userLanguage');
+			//$("#table2").find("tr:first-child").html("");
+			//document.getElementById("table2").find("td").setAttribute("style","border:1px solid #000");
+			//$("#table2").find("tr:first-child").style.display="none";
 			function opera()
 			{
 				if(top.location != self.location){  
@@ -46,8 +66,60 @@
 							a[i].height = document.body.scrollHeight; return;  
 						}  
 					}  
-				}  
+				}
+				siteSurvey(0);
+//				siteSurvey(1);
+//				clearInterval(siteSurvey);
 			}
+//			var siteservey=setInterval(siteSurvey,5000);
+			
+			function siteSurvey(ifname)  
+			{  
+//				document.getElementById("table").style.display="block";
+				if(ss_status == 1){
+					if(i18nLanguage=='en'){
+						alert('Scan is running, please try again later');
+					}else{
+						alert('扫描正在运行，请稍后重试。');
+					}
+					
+				}
+				else{
+					ss_status = 1;
+					document.formWlSiteSurvey.ifname.value = "wlan"+ifname;
+					document.formWlSiteSurvey.submit();
+				}	
+			}
+//			function siteSurvey2(ifname)  
+//			{  
+//				
+//				//$("#table2").find(".tbl_head").style.display="block";
+//				if(ss_status == 1){
+//					if(i18nLanguage=='en'){
+//						alert('Scan is running, please try again later');
+//					}else{
+//						alert('扫描正在运行，请稍后重试。');
+//					}
+//					
+//				}
+//				else{
+//					ss_status = 1;
+//					document.formWlSiteSurvey2.ifname.value = "wlan"+ifname;
+//					document.formWlSiteSurvey2.submit();
+//				}	
+//			}
+			function getCookie(name) {
+			  var cookies = document.cookie;
+			  var list = cookies.split("; ");          // 解析出名/值对列表
+			      
+			  for(var i = 0; i < list.length; i++) {
+			    var arr = list[i].split("=");          // 解析出名和值
+			    if(arr[0] == name)
+			      return decodeURIComponent(arr[1]);   // 对cookie值解码
+			  } 
+			  return "";
+			}
+//			var siteservey=setInterval(siteSurvey,1000);
 		</script>
 	</body>
 </html>

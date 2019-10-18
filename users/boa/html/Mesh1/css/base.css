@@ -1,5 +1,8 @@
 
-body { margin:0; font:12px/150% tahoma,arial,Hiragino Sans GB,Microsoft Yahei,\\5B8B\4F53; color:#4d4d4d}
+body { 
+	margin:0; 
+	font: 14px Helvetica Neue, Helvetica, PingFang SC, 微软雅黑, Tahoma, Arial, sans-serif; 
+	color:#4d4d4d}
 p,h1,h2,h3,h4,h5,h6,ul,li,dd,dt,dl { margin:0; padding:0; list-style:none}
 .fl { float:left}
 .fr { float:right}

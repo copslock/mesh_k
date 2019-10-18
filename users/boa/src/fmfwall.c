@@ -32,7 +32,6 @@
 #define  PARENT_CONTRL_SET_COMMAND    "sysconf firewall addParentControl %d"
 #define  PARENT_CONTRL_DELETE_COMMAND "sysconf firewall deleteParentControl %d"
 
-
 #ifdef QOS_BY_BANDWIDTH
 #if defined (CONFIG_RTL_8198)|| defined (CONFIG_RTL_8198C) || defined (CONFIG_RTL_8367R_SUPPORT) || defined(CONFIG_RTL_83XX_SUPPORT)
 #define MAX_BAND_WIDTH 1024000
@@ -1681,10 +1680,12 @@ cJSON *getParentControlListJSON()
 	   	*((char *)&entry) = (char)i;
 		if ( !apmib_get(MIB_PARENT_CONTRL_TBL, (void *)&entry))
 			return -1;
-		printf("\n%s:tmpMon=%d tmpTues=%d  tmpWed=%d  tmpThur=%d  tmpFri=%d tmpSat=%d  tmpSun=%d  tmpstart=%d  tmpend=%d terminal=%s\n", \
-		__FUNCTION__,entry.parentContrlWeekMon,entry.parentContrlWeekTues,entry.parentContrlWeekWed,\
+		/*
+		printf("\ntmpMon=%d tmpTues=%d  tmpWed=%d  tmpThur=%d  tmpFri=%d tmpSat=%d  tmpSun=%d  tmpstart=%d  tmpend=%d terminal=%s\n", \
+		entry.parentContrlWeekMon,entry.parentContrlWeekTues,entry.parentContrlWeekWed,\
 		entry.parentContrlWeekThur,entry.parentContrlWeekFri,entry.parentContrlWeekSat, \
-		entry.parentContrlWeekSun, entry.parentContrlStartTime,entry.parentContrlEndTime,entry.parentContrlTerminal);	
+		entry.parentContrlWeekSun, entry.parentContrlStartTime,entry.parentContrlEndTime,entry.parentContrlTerminal);
+		*/	
 		sprintf(tmpBuf,"select%d",i);
 	    cJSON_AddItemToObject(topRoot, tmpBuf,root=cJSON_CreateArray());
 	    cJSON_AddItemToArray(root,parameters=cJSON_CreateObject());		
@@ -1705,7 +1706,7 @@ cJSON *getParentControlListJSON()
 		cJSON_AddStringToObject(parameters,"parentContrlTerminal",entry.parentContrlTerminal);
 
 	}
-	printf("-------------->\njson=%s\n-------------->\n",cJSON_Print(topRoot));
+	//printf("-------------->\njson=%s\n-------------->\n",cJSON_Print(topRoot));
     return topRoot;
 }
 
@@ -1718,6 +1719,8 @@ int parentContrlList(request *wp, int argc, char **argv)
     out = cJSON_Print(root);
 	cJSON_Delete(root);	
     ret = req_format_write(wp, "%s", out);
+    if(root)
+    free(root);
     free(out);
     return ret;
 }

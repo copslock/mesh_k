@@ -1,0 +1,8 @@
+4c4
+< # Tue Oct 15 14:53:47 2019
+---
+> # Fri Oct 18 16:01:01 2019
+92c92
+< # CONFIG_APP_BOA_CGI is not set
+---
+> CONFIG_APP_BOA_CGI=y

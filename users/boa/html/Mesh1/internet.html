@@ -19,7 +19,7 @@
 		<style type="text/css">
 			#eye_open_close{
 				position: relative;
-				left: -4%;
+				left: -3%;
 			}
 			.progress{
 				display: none;
@@ -111,7 +111,7 @@
 			 					<div class="form-group static_ip"><label class="i18n" name="DNS2_internet"></label>&nbsp;&nbsp;<input class="form_input" type="text" name="dns2" value="<% getInfo("wan-dns2"); %>" /></div>
 			 					<input class="form_input" type="hidden" name="dns3" value="<% getInfo("wan-dns3"); %>" />
 			 					<div class="form-group pppoe"><label class="i18n" name="name_internet"></label>&nbsp;&nbsp;<input class="form_input" type="text" name="pppUserName" value="<% getInfo("pppUserName"); %>" /></div>
-			 					<div class="form-group pppoe"><label class="i18n" name="password_internet" style="position: relative;right: -10px;"></label>&nbsp;&nbsp;<input id="pppPassword" class="form_input" style="margin-left: 30px;" type="password" name="pppPassword" value="<% getInfo("pppPassword"); %>" /><i id="eye_open_close" class="icon-eye-close glyphicon glyphicon-eye-close"></i></div>
+			 					<div class="form-group pppoe"><label class="i18n" name="password_internet" style="position: relative;right: -10px;"></label>&nbsp;&nbsp;<input id="pppPassword" class="form_input" style="margin-left: 15px;" type="password" name="pppPassword" value="<% getInfo("pppPassword"); %>" /><i id="eye_open_close" class="icon-eye-close glyphicon glyphicon-eye-close"></i></div>
 			 					<div class="form-group pppoe"><label class="i18n" name="size_pppMtuSize"></label>&nbsp;&nbsp;<input type="text" name="pppMtuSize" size="10" maxlength="10" value="<% getInfo("pppMtuSize"); %>"></div>
 			 					<!--<div class="form-group pppoe pppoe_button">
 			 						<button type="submit" value="Connect" name="pppConnect" onClick="return pppConnectClick(0)">连接</button>

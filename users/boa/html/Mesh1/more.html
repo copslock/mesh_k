@@ -9,33 +9,31 @@
 	    <meta name="description" content=""/>
 	    <meta http-equiv="Access-Control-Allow-Origin" content="*">
 		<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="css/libs/font-awesome.css"/>	
-		<link href="css/bootstrap-switch.min.css" rel="stylesheet" />
 		<link rel="stylesheet" type="text/css" href="css/base.css"/>
 		<link rel="stylesheet" href="css/main.css" />
-
+		<link type="image/x-icon" href="img/favicon.png" rel="shortcut icon"/>
 	</head>
-	<body>
+	<body style="overflow-y: auto;background: #F5F5F5;">
 		 		<div class="main_content">
 		 			<div class="side_nav">
 		 				<ul>
-		 					<li class="active_more"><a href_val="guest_net.html"><span class="i18n" name="guest_more"></span></a></li>
-		 					<li><a href_val="parentControl.html"><span class="i18n" name="parentControl_more"></span></a></li>
-		 					<li><a href_val="smartQos.html"><span class="i18n" name="smart_more"></span></a></li>
-		 					<li><a href_val="addnode.html"><span class="i18n" name="addNode_more"></span></a></li>
-		 					<li class="firewall_more"><a onclick="slide_f()"><span class="i18n" name="firewall_more"></span></a>
+		 					<li class="active_more" value="1"><a href_val="guest_net.html"><span class="i18n" name="guest_more"></span></a></li>
+		 					<li value="2"><a href_val="parentControl.html"><span class="i18n" name="parentControl_more"></span></a></li>
+		 					<li value="3"><a href_val="smartQos.html"><span class="i18n" name="smart_more"></span></a></li>
+		 					<!--<li><a href_val="addnode.html"><span class="i18n" name="addNode_more"></span></a></li>-->
+		 					<li class="firewall_more" value="4"><a onclick="slide_f()"><span class="i18n" name="firewall_more"></span></a>
 		 						<ul id="toggle_firewall">
-		 							<li><a href_val="macfilter.html"><span class="i18n" name="mac_filter"></span></a></li>
-		 							<li><a href_val="ipfilter.html"><span class="i18n" name="ip_filter"></span></a></li>
-		 							<li><a href_val="urlfilter.html"><span class="i18n" name="url_filter"></span></a></li>
+		 							<li value="11"><a href_val="macfilter.html"><span class="i18n" name="mac_filter"></span></a></li>
+		 							<li value="12"><a href_val="ipfilter.html"><span class="i18n" name="ip_filter"></span></a></li>
+		 							<li value="13"><a href_val="urlfilter.html"><span class="i18n" name="url_filter"></span></a></li>
 		 						</ul>
 		 					</li>
-		 					<li><a href_val="dhcpserver.html"><span class="i18n" name="dhcpServer_more"></span></a></li>
-		 					<li><a href_val="softwareup.html"><span class="i18n" name="software_more"></span></a></li>
-		 					<li><a href_val="environment.html"><span class="i18n" name="environment_more"></span></a></li>
-		 					<li><a href_val="systemmanage.html"><span class="i18n" name="system_more"></span></a></li>
-		 					<li><a href_val="password.html"><span class="i18n" name="password_more"></span></a></li>
-		 					<li><a href_val="version.html"><span class="i18n" name="help_more"></span></a></li>
+		 					<li value="5"><a href_val="dhcpserver.html"><span class="i18n" name="dhcpServer_more"></span></a></li>
+		 					<li value="6"><a href_val="softwareup.html"><span class="i18n" name="software_more"></span></a></li>
+		 					<li value="7"><a href_val="environment.html"><span class="i18n" name="environment_more"></span></a></li>
+		 					<li value="8"><a href_val="systemmanage.html"><span class="i18n" name="system_more"></span></a></li>
+		 					<li value="9"><a href_val="password.html"><span class="i18n" name="password_more"></span></a></li>
+		 					<li value="10"><a href_val="version.html"><span class="i18n" name="help_more"></span></a></li>
 		 				</ul>
 		 			</div>
 		 			<div class="right_content">
@@ -44,7 +42,6 @@
 		 		</div>		
 		<script src="js/jquery.js"></script>
 		<script src="js/bootstrap.js"></script>
-		<script src="js/bootstrap-switch.min.js"></script>
 		<script src="js/jquery.cookie.js"></script>
 	    <!-- 加载语言包文件 -->
 	    <script src="js/jquery.i18n.properties.js"></script>
@@ -59,7 +56,7 @@
 					$("#toggle_firewall").slideUp();
 				}
 			}
-			
+//			var flag;
 			var topHeight=parent.top_height;
 			var bottomHeight=parent.bottom_height;
 			$(".main_content").height(window.innerHeight);//设置页面内容content高度
@@ -70,25 +67,28 @@
 			var content_height=window.innerHeight-top_height-bottom_height;	
 			$(".iframe_holder").height(content_height);
 			//单击导航栏时设置iframe对应页面
-			var iframe_href;
+			var iframe_href,iframe_href2,side_value;
 			$(".side_nav >ul >li").click(function() {
 				if(!$(this).hasClass("firewall_more")){
 					if($("#toggle_firewall").css("display")=="block"){
 						$("#toggle_firewall").slideUp();
 					}
 					$("#toggle_firewall li").removeClass("active_more");
-				}				
+				}
 				iframe_href = $(this).children().attr("href_val");
-				$(".iframe_holder").attr("src",iframe_href);				
+				$(".iframe_holder").attr("src",iframe_href);
 				$(this).addClass("active_more");
 				$(this).siblings().removeClass("active_more");
 			});
 			$("#toggle_firewall li").click(function(){
 				iframe_href = $(this).children().attr("href_val");
-				$(".iframe_holder").attr("src",iframe_href);				
+				$(".iframe_holder").attr("src",iframe_href);
 				$(this).addClass("active_more");
 				$(this).siblings().removeClass("active_more");
 			})
+			
+				
 		</script>
+		
 	</body>
 </html>

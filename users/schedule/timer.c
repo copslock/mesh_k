@@ -4,22 +4,34 @@
 Copyright (c) 2019, All rights reserved.
 
 File         : timer.c
+Status       : Current
 Description  : 
 
-Contact      : fervour.cool@163.com
+Author       : haopeng
+Contact      : 376915244@qq.com
 
 Revision     : 2019-07 
 Description  : Primary released
 
+## Please log your description here for your modication ##
+
+Revision     : 
+Modifier     : 
+Description  : 
+
 */
 
-
-
+#include <sys/sysinfo.h>
+#include "../boa/apmib/apmib.h"
 #include "timer.h"
 #include <time.h>
+#include "guestWlan.h"
+#include "timerCheck.h"
+
 #define	TIMER_CONTINUE	0
 #define	TIMER_REMOVE	1
 extern void taskPolling(void *data);
+extern int parentContrl(void *data, int reason );
 typedef uint64_t timerTick_t;
 
 /*
@@ -289,23 +301,101 @@ void timerFreeAll(void)
 }
 int timerDemo(void *data, int reason )
 {
-	 printf("---->timer runing:<----\n");
+	 //printf("---->timer runing:<----\n");
 	 return TIMER_CONTINUE;  
 }
 
+/* p_time like 23:09 ->23 hour -> 09 min*/
+int get_time_buffer(char *p_time, int *p_hour, int *p_min)
+{
+	char *p = NULL;
+	char buffer[32] = {0};
+	
+	p = strstr(p_time, ":");
 
+	if (p == NULL)
+		return -1;
+
+	strncpy(buffer,p_time,p - p_time);
+	*p_hour = atoi(buffer);
+
+	sprintf(buffer, "%s", p+1);
+	*p_min = atoi(buffer);
+	
+	return 0;
+}
+
+
+int timerReboot(void *data, int reason )
+{
+	//printf("---->timer reboot runing:<----\n");
+
+	char *wday[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+	time_t timep;
+	struct tm *p;
+	int min = 0;
+	int hour = 0;
+	char buffer[32] = {0};
+	unsigned long sec;
+	struct sysinfo info ;
+	
+	memset(buffer, 0, sizeof(buffer));
+	apmib_get(MIB_DEV_RESTART_ENABLE, (void *)buffer);
+	if (strlen(buffer) <= 0 || strcmp(buffer, "on"))
+	{
+		return TIMER_CONTINUE; 
+	}
+
+	sysinfo(&info);
+	sec = (unsigned long) info.uptime ;
+	if (sec < 65)
+	{
+		return TIMER_CONTINUE; 
+	}
+
+	time(&timep);
+	p=localtime(&timep); 
+	//printf ("%d%d%d	", (1900+p->tm_year),( 1+p->tm_mon), p->tm_mday);
+	//printf("%s%d:%d:%d\n", wday[p->tm_wday],p->tm_hour, p->tm_min, p->tm_sec);
+
+	apmib_get(MIB_DEV_RESTART_TIME, (void *)buffer);
+	//printf("restart time = %s\n", buffer);
+	if (get_time_buffer(buffer, &hour, &min) < 0)
+	{
+		printf("[restart time]DEV_RESTART_TIME format error!!!\n");
+		return TIMER_CONTINUE; 
+	}
+	//printf("min = %d sec = %d\n", hour, min);
+
+	if (p->tm_hour == hour && p->tm_min == min)
+	{
+		printf("reboot time out ... \n");
+		printf("====>restart time = %s\n====>local time =", buffer);
+		system("date");
+		system("reboot");
+		return TIMER_CONTINUE;  
+	}
+
+	return TIMER_CONTINUE;  
+}
 void main()
 {
+    InitGuestWlan();
+    InitTimerCheck();
 
-threadAddPollingFunction("sys.timer",NULL, timerPolling);
-//threadAddPollingFunction("sys.task", NULL, taskPolling);
-timerAdd("timer.demo", 6*1000, 5*1000, timerDemo, NULL, NULL);
+    threadAddPollingFunction("sys.timer",NULL, timerPolling);
+    //threadAddPollingFunction("sys.task", NULL, taskPolling);
+    timerAdd("timer.demo", 6*1000, 5*1000, timerDemo, NULL, NULL);
+    timerAdd("timer.guest_wlan_ctrl", 60*1000, 0, doGuestWlanCtrl, NULL, NULL);
+	timerAdd("timer.reboot", 1*1000, 5*1000, timerReboot, NULL, NULL);
+	timerAdd("timer.parentContrl", 10*1000, 0, parentContrl, NULL, NULL);
+    timerAdd("timer.timerCheck", 1*1000, 0, timerCheck, NULL, NULL);
 
-threadSchedule(1000);
- 
-//taskFreeAll();
-timerFreeAll();
-threadFreeAll();
+    threadSchedule(1000);
+     
+    //taskFreeAll();
+    timerFreeAll();
+    threadFreeAll();
 
 }
 

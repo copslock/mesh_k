@@ -13,14 +13,21 @@ else
 CGI_PYTHON_TARGET = 
 endif
 
+
+APMIB_DIR=$(DIR_USERS)/boa/apmib
+
 CGI_TARGET := $(CGI_C_TARGET) $(CGI_PYTHON_TARGET)
+
+SOURCES_SER = c_demo.c   ../src/deviceProcIf.c
+
+OBJS_SER = $(SOURCES_SER:.c=.o)
 
 .PHONY: all clean
 all: $(CGI_TARGET)
 
 c_demo: c_demo.o
-	$(CC) -o $@ $<
-	cp $@ ../html/$@.cgi
+	$(CC) -o $@  $(OBJS_SER) -L$(APMIB_DIR) -lapmib
+	cp $@ ../html/Mesh1/$@.cgi
 
 python_demo: python_demo.py
 	cp $< ../html/

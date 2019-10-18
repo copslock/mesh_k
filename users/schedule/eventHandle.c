@@ -34,7 +34,8 @@ Description  :
 #define  THURSDAY	 4
 #define  FRIDAY 	 5
 #define  SATDAY 	 6
-#define  PARENT_CONTRL_SET_COMMAND "sysconf firewall parentControl"
+#define  PARENT_CONTRL_SET_COMMAND    "sysconf firewall addParentControl %d"
+#define  PARENT_CONTRL_DELETE_COMMAND "sysconf firewall deleteParentControl %d"
 
 
 
@@ -86,6 +87,7 @@ int parentContrlList()
 	int nBytesSent=0, parentEntryNum, i,j;
 	PARENT_CONTRL_T entry;
 	int curentTime;
+	char commandBuf[64]={0};
 
 	time_t rawtime;  
 	struct tm* currentTimeInfo;
@@ -123,8 +125,18 @@ int parentContrlList()
 		||(currentTimeInfo->tm_wday==(entry.parentContrlWeekSun?SUNDAY:WEEK_TIME_DISABLED))) \
 		{
 		 	//printf("------>function_%s_line[%d]: parent week is ok \n",__FUNCTION__,__LINE__);
-		 if((curentTime>=entry.parentContrlStartTime)&&(curentTime<=entry.parentContrlEndTime))
-          system(PARENT_CONTRL_SET_COMMAND);
+		 if((curentTime>=entry.parentContrlStartTime)&&(curentTime<(entry.parentContrlStartTime+1)))
+		 {
+		  memset(commandBuf,0,sizeof(commandBuf));
+		  sprintf(commandBuf,PARENT_CONTRL_SET_COMMAND,i);
+          system(commandBuf);
+		 }
+		 else if((curentTime>=entry.parentContrlEndTime)&&(curentTime<(entry.parentContrlEndTime+1)))
+		 {	 
+		    memset(commandBuf,0,sizeof(commandBuf));
+		 	sprintf(commandBuf,PARENT_CONTRL_DELETE_COMMAND,i);
+		 	system(commandBuf);
+		 }
 		}
 	}
 	return TIMER_CONTINUE;
@@ -135,7 +147,6 @@ int parentContrl(void *data, int reason )
 {
     int intVal=0;
     apmib_get(MIB_PARENT_CONTRL_ENABLED,  (void *)&intVal);
-	printf("------>function_%s_line[%d] intVal=%d \n",__FUNCTION__,__LINE__,intVal);
 	if(intVal==1){
      parentContrlList();
 	}

@@ -6,13 +6,19 @@ File         : task.h
 Status       : Current
 Description  : 
 
-Contact      : fervour.cool@163.com
+Author       : haopeng
+Contact      : 376915244@qq.com
 
 Revision     : 2019-07 
 Description  : Primary released
 
-*/
+## Please log your description here for your modication ##
 
+Revision     : 
+Modifier     : 
+Description  : 
+
+*/
 
 
 

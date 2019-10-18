@@ -26,7 +26,7 @@
 #include "./../src/utility.h"
 
 #define MAX_L2_LIST_NUM    256
- 
+
 int g_parentControlFlag=0;       //parent control action(add,delete,ignore)
 int g_parentControlListTableNumberFlag=0;  //meas which table list need be process
 //int g_parentControlDeleteListFlag=0;  //meas which table list need be delete
@@ -39,7 +39,6 @@ int g_parentControlListTableNumberFlag=0;  //meas which table list need be proce
 #define  SATDAY 	 6
 #define WEEK_NUM        7
 #define WEEK_TIME_DISABLED 7
-
 extern int getWlStaInfo( char *interface,  WLAN_STA_INFO_Tp pInfo );
 #define DEFAULT_PARENT_CONTROL_IGNORE_ACT 0
 #define SET_PARENT_CONTROL_LIST   	 	  1
@@ -2454,6 +2453,7 @@ static int getDhcpClient(char **ppStart, unsigned long *size, unsigned char *hna
 		unsigned char chaddr[16];
 		unsigned int yiaddr;       /* network order */
 		unsigned int expires;      /* host order */
+		unsigned int linktime; /* link time */
 //#if defined(CONFIG_RTL8186_KB) || defined(CONFIG_RTL8186_TR) || defined(CONFIG_RTL865X_SC) || defined(CONFIG_RTL865X_AC) || defined(CONFIG_RTL865X_KLD)
 		char hostname[64]; /* Brad add for get hostname of client */
 		u_int32_t isUnAvailableCurr;	/* Brad add for WEB GUI check */
@@ -2880,7 +2880,7 @@ static int rtk_get_lan_device_info(unsigned int *num, RTK_LAN_DEVICE_INFO_Tp pde
 		 ||(currentTimeInfo->tm_wday==(entry.parentContrlWeekSat?SATDAY:WEEK_TIME_DISABLED)) \
 		 ||(currentTimeInfo->tm_wday==(entry.parentContrlWeekSun?SUNDAY:WEEK_TIME_DISABLED))) \
 		 {
-		   printf("------>function_%s_line[%d]: parent week is ok \n",__FUNCTION__,__LINE__);
+		  // printf("------>function_%s_line[%d]: parent week is ok \n",__FUNCTION__,__LINE__);
 		  if((curentTime>=entry.parentContrlStartTime)&&(curentTime<=entry.parentContrlStartTime))
 		  {
 		  g_parentControlFlag=SET_PARENT_CONTROL_LIST;
@@ -2895,7 +2895,6 @@ static int rtk_get_lan_device_info(unsigned int *num, RTK_LAN_DEVICE_INFO_Tp pde
 	 }
 	 return 0;
  }
-
  int parentControlSetting(int parentContrlAction,const char* hostname)
  {
 	 RTK_LAN_DEVICE_INFO_T devinfo[MAX_STA_NUM] = {0};
@@ -2912,10 +2911,11 @@ static int rtk_get_lan_device_info(unsigned int *num, RTK_LAN_DEVICE_INFO_Tp pde
 	   sprintf(macEntry,"%02X:%02X:%02X:%02X:%02X:%02X", devinfo[i-1].mac[0], devinfo[i-1].mac[1], devinfo[i-1].mac[2], devinfo[i-1].mac[3],devinfo[i-1].mac[4],devinfo[i-1].mac[5]);
 	   if((strcmp(hostname,devinfo[i-1].hostname)==0)||(strncasecmp(hostname,macEntry,17)==0))
 	   {
-	  // printf("------>function_%s_line[%d]: mac=%02X:%02X:%02X:%02X:%02X:%02X\n",__FUNCTION__,__LINE__,devinfo[i-1].mac[0], devinfo[i-1].mac[1], devinfo[i-1].mac[2], devinfo[i-1].mac[3],devinfo[i-1].mac[4],devinfo[i-1].mac[5]);
+	 // printf("------>function_%s_line[%d]: mac=%02X:%02X:%02X:%02X:%02X:%02X\n",__FUNCTION__,__LINE__,devinfo[i-1].mac[0], devinfo[i-1].mac[1], devinfo[i-1].mac[2], devinfo[i-1].mac[3],devinfo[i-1].mac[4],devinfo[i-1].mac[5]);
 	    //sprintf(macEntry,"%02X:%02X:%02X:%02X:%02X:%02X", devinfo[i-1].mac[0], devinfo[i-1].mac[1], devinfo[i-1].mac[2], devinfo[i-1].mac[3],devinfo[i-1].mac[4],devinfo[i-1].mac[5]);
      if(SET_PARENT_CONTROL_LIST==parentContrlAction)
      {
+	 //printf("------>function_%s_line[%d] \n",__FUNCTION__,__LINE__);
 #if defined(CONFIG_RTL_FAST_FILTER)
 		memset(cmdBuffer, 0, sizeof(cmdBuffer));
 	    sprintf(cmdBuffer, "rtk_cmd filter add --mac-src %s", macEntry);
@@ -2932,9 +2932,11 @@ static int rtk_get_lan_device_info(unsigned int *num, RTK_LAN_DEVICE_INFO_Tp pde
 		memset(cmdBuffer, 0, sizeof(cmdBuffer));
 		sprintf(cmdBuffer, "rtk_cmd igmp_delete %02X:%02X:%02X:%02X:%02X:%02X", devinfo[i-1].mac[0], devinfo[i-1].mac[1],devinfo[i-1].mac[2], devinfo[i-1].mac[3], devinfo[i-1].mac[4], devinfo[i-1].mac[5]);
 		system(cmdBuffer);
-      }
+	   }  
 	  if(DELETE_PARENT_CONTROL_LIST==parentContrlAction)
 	  {
+
+	// printf("------>function_%s_line[%d] \n",__FUNCTION__,__LINE__);
 	   	RunSystemCmd(NULL_FILE, Iptables, INSERT, FORWARD, match, "mac" ,mac_src, macEntry, jump, ACCEPT, NULL_STR);
 		RunSystemCmd(NULL_FILE, Iptables, INSERT, INPUT, match, "mac" ,mac_src, macEntry, jump, ACCEPT, NULL_STR);
 	  }
@@ -2942,6 +2944,7 @@ static int rtk_get_lan_device_info(unsigned int *num, RTK_LAN_DEVICE_INFO_Tp pde
 	   }  
 
 	 }
+	 //printf("------>function_%s_line[%d] \n",__FUNCTION__,__LINE__);
 	 return nBytesSent;
  }
 
@@ -2956,7 +2959,7 @@ static int rtk_get_lan_device_info(unsigned int *num, RTK_LAN_DEVICE_INFO_Tp pde
 	 p = strsep(&buff, ";");
 	while(p)
 	{
-	 printf("------>function_%s_line[%d]:hostname[%s] \n",__FUNCTION__,__LINE__,p);
+	 //printf("------>function_%s_line[%d]:hostname[%s] \n",__FUNCTION__,__LINE__,p);
 	 parentControlSetting(parentContrlAction,p);
 	 p = strsep(&buff, ";");
 	 i++;
@@ -2974,7 +2977,6 @@ int setParentContrl(int parentContrlAction,int parentContrlTableNum )
 	char cmdBuffer[80];
 
 	apmib_get(MIB_PARENT_CONTRL_TBL_NUM, (void *)&entryNum);
-	printf("------>function_%s_line[%d]:entryNum[%d] \n",__FUNCTION__,__LINE__,entryNum);
 
 	for (index=1; index<=entryNum; index++) {
 		if(index!=parentContrlTableNum)
@@ -2982,7 +2984,7 @@ int setParentContrl(int parentContrlAction,int parentContrlTableNum )
 		memset(&entry, '\0', sizeof(entry));
 		*((char *)&entry) = (char)index;
 		apmib_get(MIB_PARENT_CONTRL_TBL, (void *)&entry);
-		 printf("------>function_%s_line[%d]:parentContrlTerminal[%s] \n",__FUNCTION__,__LINE__,entry.parentContrlTerminal);
+	//	 printf("------>function_%s_line[%d]:parentContrlTerminal[%s] \n",__FUNCTION__,__LINE__,entry.parentContrlTerminal);
         parseTerminalMac(parentContrlAction,entry.parentContrlTerminal);				
 	}
 	return 0;

@@ -70,6 +70,7 @@ typedef enum
 	FIRMWARE_VALID=DEFAULT,
 	FIRMWARE_ERROR_NETWORK_UNREACHABLE,
 	FIRMWARE_ERROR_FILE_PATH_NO_FIRMRE,
+	FIRMWARE_ERROR_FILE_SIZE,
 }firmreCheck_t;
 
 int computeUpgradeFileMd5(const char *file_path, char *value);

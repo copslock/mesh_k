@@ -927,7 +927,7 @@ a.table-link:link,a.table-link:visited,a.table-link:hover,a.table-link:active{
 	text-align: center;
 }
 .IpFilter .ip_filter label{
-	width: 100px;
+	width: 120px;
 	text-align: right;
 }
 .ip_filter select{

@@ -37,6 +37,8 @@
 	#include "auth.h"
 #endif 
 
+#include "apform.h"
+
 #define STR(s) __STR(s)
 #define __STR(s) #s
 
@@ -513,7 +515,7 @@ int init_get(request * req)
         else
             send_r_bad_request(req);
 #else
-	send_redirect_perm(req,"home.htm");
+	send_redirect_perm(req, WEB_PAGE_HOME);
 #endif
 
 	return 0;

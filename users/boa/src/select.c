@@ -250,7 +250,7 @@ void loop(int server_s)
 		   {
 		   // remoteChekUpgrade();
 		   }
-		  // printf("===================%s:%d-----version_%d confirmware_%d-----<\n",__FUNCTION__,__LINE__,remoteUpgradeInfo.checkVersionStatus,remoteUpgradeInfo.upgradeConfirm);
+		   //printf("===================%s:%d-----version_%d confirmware_%d-----<\n",__FUNCTION__,__LINE__,remoteUpgradeInfo.checkVersionStatus,remoteUpgradeInfo.upgradeConfirm);
 		   if((remoteUpgradeInfo.checkVersionStatus)&&(remoteUpgradeInfo.upgradeConfirm))   
 		   {
 		    performUpgrade();

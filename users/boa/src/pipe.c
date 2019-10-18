@@ -42,7 +42,7 @@ int read_from_pipe(request * req)
 {
     int bytes_read; /* signed */
     unsigned int bytes_to_read; /* unsigned */
-	printf("%s %d\n",__FUNCTION__,__LINE__);
+	//printf("%s %d\n",__FUNCTION__,__LINE__);
 #ifdef SUPPORT_ASP
     bytes_to_read = req->max_buffer_size - (req->header_end - (char *)req->buffer);
 #else

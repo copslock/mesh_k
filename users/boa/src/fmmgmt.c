@@ -81,6 +81,8 @@ int isCountDown=0;
 #endif
 #ifdef LOGIN_URL
 static void delete_user(request *wp);
+static int add_user(request *wp);
+
 #endif
 int configlen = 0;
 
@@ -3834,6 +3836,9 @@ set_ntp_end:
 #ifndef NO_ACTION
 	run_init_script("all");
 #endif
+
+    time(&current_time);
+    add_user(wp);
 	OK_MSG(submitUrl);
 	return;
 
@@ -7278,6 +7283,7 @@ static int getDhcpClient(char **ppStart, unsigned long *size, unsigned char *hna
 		unsigned char chaddr[16];
 		unsigned int yiaddr;       /* network order */
 		unsigned int expires;      /* host order */
+		unsigned int linktime; /* link time */
 //#if defined(CONFIG_RTL8186_KB) || defined(CONFIG_RTL8186_TR) || defined(CONFIG_RTL865X_SC) || defined(CONFIG_RTL865X_AC) || defined(CONFIG_RTL865X_KLD)
 		char hostname[64]; /* Brad add for get hostname of client */
 		u_int32_t isUnAvailableCurr;	/* Brad add for WEB GUI check */
@@ -8305,7 +8311,8 @@ void formLEDControl(request *wp, char *path, char *query)
     {
 	    send_redirect_perm(wp, str_val);	
     }
-
+    apmib_update_web(CURRENT_SETTING);
+    
 #ifdef CSRF_SECURITY_PATCH
     log_boaform("fromLEDControl", wp);  //To set fromLEDControl valid at security_tbl
 #endif
@@ -8377,6 +8384,7 @@ void fromTimerReboot(request *wp, char *path, char *query)
   		    printf("set MIB_DEV_RESTART_TIME err.\n");
 	    } 
     }
+    apmib_update_web(CURRENT_SETTING);
     
     str_val = req_get_cstream_var(wp, ("submit-url"), "");
     if(str_val[0])

@@ -292,6 +292,8 @@ remoteUpgrade_t getUpgradeFileInfo(remoteUpgrade_t fileInfo,char *recvData)
 	strcpy(fileInfo.versionUpdateLog,cJSON_GetObjectItem(jasonObj,"content")->valuestring);
 //	printf("--->downurl=%s remoteFwVersion=%s md5=%s\n",fileInfo.downloadUrl,fileInfo.remoteFwVersion,fileInfo.md5);
    }
+   if(jsonData != NULL)
+     free(jsonData);
    return fileInfo;
 }
 int upgradeInit(remoteUpgrade_t fileInfo)
@@ -373,6 +375,48 @@ int computeUpgradeFileMd5(const char *filePath, char *md5Value)
 		snprintf(md5Value + i*2, 2+1, "%02x", md5_value[i]);
 	}
 	md5Value[MD5_STR_LEN] = '\0'; // add end
+	return 0;
+}
+static firmreCheck_t app_getUpgradeFile(const char *url,const char *md5) {
+    FILE *fp = NULL;
+	char *ptr = NULL;
+	struct stat f_stat;
+	char cmdBuf[128];
+	int ret =1;
+	memset(cmdBuf, 0, sizeof(cmdBuf));
+	sprintf(cmdBuf,"cd /tmp ; wget -O fw.bin %s",url);
+    system(cmdBuf);
+	if(access(LOCATION_FILE_PATH, R_OK)==0)
+	{
+		stat(LOCATION_FILE_PATH, &f_stat);
+		printf("/tmp/fw.bin file size = %d\n", f_stat.st_size);
+		if(f_stat.st_size < 5000000)
+		{
+			ret=FIRMWARE_ERROR_FILE_SIZE;
+			return ret;
+		}
+		
+		ret=checkFileMd5(LOCATION_FILE_PATH, md5);
+		if(ret==0)
+			printf("##firmware md5 is right\n");	
+		else
+			printf("--firmware md5 is error\n");	
+	}      
+	else
+	{
+		ret=FIRMWARE_ERROR_FILE_PATH_NO_FIRMRE;
+	}
+   
+    printf("firmware md5 is right ret=%d\n",ret);
+    return ret;
+}
+int app_performUpgrade()
+{
+	int ret =2;
+	ret=app_getUpgradeFile(remoteUpgradeInfo.downloadUrl, remoteUpgradeInfo.md5);
+	if(FIRMWARE_VALID==ret)
+		return 1;
+
 	return 0;
 }
 

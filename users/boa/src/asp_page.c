@@ -495,7 +495,7 @@ form_name_t root_form[] = {
 #include <time.h>
 
 #define EXPIRE_TIME					360	// in sec
-#define MAX_TBL_SIZE				8
+#define MAX_TBL_SIZE				16
 
 struct goform_entry {
 	int	valid;		
@@ -1138,6 +1138,11 @@ void handleForm(request *req)
 				}
 
                  if(strcmp(now_form->name,"formLogin")==0)
+				{
+					log_boaform(now_form->name,req);	
+				}
+
+                if(strcmp(now_form->name,"formNewWizard")==0)
 				{
 					log_boaform(now_form->name,req);	
 				}
